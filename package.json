@@ -13,11 +13,13 @@
     "babel-cli": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
     "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-session": "^1.17.0",
     "fluent-ffmpeg": "^2.1.2",
     "hls-server": "^1.5.0",
     "keycloak-connect": "^8.0.1",
+    "keycloak-js": "^8.0.1",
     "passport": "^0.4.1",
     "passport-openid-connect": "^0.1.0",
     "save-dev": "0.0.1-security"

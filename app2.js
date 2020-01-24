@@ -1,4 +1,5 @@
 
+import cors  from 'cors';
 
 import express from 'express';
 import bodyParser from 'body-parser';
@@ -7,11 +8,19 @@ import session from 'express-session';
 import Keycloak from 'keycloak-connect';
 
 const app = express()
-
+app.use(cors());
 app.use(bodyParser.json());
 
 // 2
 const memoryStore = new session.MemoryStore();
+
+// on précise ici qu'on autorise toutes les sources
+// puis dans le second header, quels headers http sont acceptés
+app.use(function(request, response, next) {
+  response.header("Access-Control-Allow-Origin", "*");
+  response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 app.use(
   session({
@@ -46,38 +55,48 @@ app.get('/api/admin', keycloak.protect('realm:admin'), function(req, res) {
 });
 
 
-app.use('/', keycloak.protect(), express.static('public/videos'));
+app.use('/node_modules/keycloak-js/', express.static('node_modules/keycloak-js'));
 
-app.get('/index.html', keycloak.protect(), function (req, res) {
+app.use('/keycloak.json', express.static('keycloak.json'));
+
+
+
+
+
+app.get('/index.html', function (req, res) {
   var s = `<html><head><title>HLS Player fed by node.js' +
-        '</title></head>
-        <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+        '</title>
+        <link href="https://unpkg.com/video.js/dist/video-js.css" rel="stylesheet">
+
+        </head>
+        
+<!--        <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>-->
+        <script src="http://localhost:8080/auth/js/keycloak.js"></script>
         
         <body>
-        <video id="video" controls autoplay></video>   
+        <video-js id="my_video_1" class="vjs-default-skin" controls preload="auto" width="640" height="268">
+        <source id="video" type="application/x-mpegURL">        
+        </video-js>
         <BR>
         <a href="/logout"> logout</a>     
-        <script>
-  var video = document.getElementById('video');
-  if(Hls.isSupported()) {
-    var hls = new Hls();
-    hls.loadSource('http://localhost:3000/output.m3u8');
-    hls.attachMedia(video);
-    hls.on(Hls.Events.MANIFEST_PARSED,function() {
-      video.play();
-  });
- }
-  else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-    video.src = 'http://localhost:3000/output.m3u8';
-    video.addEventListener('loadedmetadata',function() {
-      video.play();
-    });
-  }
+          
+        <script src="https://unpkg.com/video.js/dist/video.js"></script>
+        <script src="https://unpkg.com/@videojs/http-streaming/dist/videojs-http-streaming.js"></script>
+  
+        <script src="/client.js"></script>
+
 </script>
+
         </body></html>`
   res.send(s);
 });
 
+
+app.use('/client.js', express.static('public/videos/client.js'));
+
+
+
+app.use('/', keycloak.protect(), express.static('public/videos'));
 
 
 
