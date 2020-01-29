@@ -34,3 +34,11 @@ services:
         - 8080:8080
       depends_on:
         - postgres
+  hlsserver:
+    image: barais/hlsserver
+    environment:
+      KEYCLOAKIP: keycloak 
+    ports:
+      - 3000:3000
+    depends_on:
+      - keycloak
