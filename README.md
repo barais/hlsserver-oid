@@ -1,4 +1,12 @@
-# hlsserver-oid
+# hlsserver
+
+
+sudo docker run -t -i  -e KEYCLOAKIP=127.0.0.1 -p3002:3000 barais/hlsserver
+
+
+
+
+
 
 
 curl -X POST \
