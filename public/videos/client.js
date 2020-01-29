@@ -14,16 +14,18 @@ keycloak.init({
         });
         var video = document.getElementById('video');
         video.src = '/output.m3u8';
-        var player = videojs('my_video_1');
+        const options = {
+            crossorigin: 'use-credentials',
+            cors: 'Anonymous',
+          }
+        var player = videojs('my_video_1', options);
 
         window.setInterval(() =>{ 
             keycloak.updateToken(30).then(function () {
                 console.log('update token');
             }).catch(function () {
-                alert('Failed to refresh token');
+                console.log('Failed to refresh token');
             });
-    
-
         }, 30000 );
 
 
